@@ -28,3 +28,7 @@ def create_tweet(db: Session, tweet: schemas.TweetCreate):
     db.commit()
     db.refresh(db_tweet)
     return db_tweet
+
+
+def get_events(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Event).limit(limit).all()
