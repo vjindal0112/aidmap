@@ -1,5 +1,6 @@
 "use client";
 
+import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import Image from "next/image";
 import {Inter} from "@next/font/google";
 import styles from "./page.module.css";
@@ -79,7 +80,7 @@ export default function Home() {
             }}
             weight="extrabold"
           >
-            FeedBee simplifies feedback for your newsletter
+            AidMap simplifies feedback for your newsletter
           </Text>
           <Text size={18}>
             Get actionable feedback from your readers seamlessly with 1-click
@@ -97,34 +98,6 @@ export default function Home() {
         <Spacer y={6} />
       </main>
       <main>
-        <Grid.Container
-          justify="center"
-          alignItems="center"
-          css={{padding: "12px"}}
-          gap={5}
-        >
-          <Grid xs={1}></Grid>
-          <Grid
-            xs
-            direction="column"
-            alignItems="center"
-            css={{textAlign: "center"}}
-          >
-            <Text h3>Get actionable feedback</Text>
-            <Spacer y={0.25} />
-            <Text>Readers can give you feedback with a single click.</Text>
-          </Grid>
-          <Grid xs={6} alignItems="center" direction="column">
-            <Image
-              height={325}
-              width={600}
-              alt="FeedBee from the reader's perspective GIF"
-              src="https://raw.githubusercontent.com/Feed-Bee/feedbee-images/main/feedbee-reader-perspective.webp"
-            />
-          </Grid>
-
-          <Grid xs={1}></Grid>
-        </Grid.Container>
       </main>
       <main>
         <Grid.Container
