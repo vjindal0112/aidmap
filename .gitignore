@@ -23,6 +23,7 @@ chrome-user-data
 .vscode
 *.swp
 *.swo
+test-env/
 
 .next
 next-env.d.ts
