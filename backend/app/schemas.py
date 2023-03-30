@@ -8,12 +8,11 @@ class EventBase(BaseModel):
 
 
 class EventCreate(EventBase):
-    time: str
+    pass
 
 
 class Event(EventBase):
     id: int
-    time: str
 
     class Config:
         orm_mode = True

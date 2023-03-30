@@ -1,7 +1,9 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Boolean, Column, Integer, String, Float, Time
+from sqlalchemy import Boolean, Column, Integer, String, Float
+from functools import lru_cache
+import config
 
 
 SQLALCHEMY_DATABASE_URL = "postgresql://varun:@localhost:5432/main"
@@ -14,6 +16,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 Base.metadata.create_all(bind=engine)
+
+
+@lru_cache()
+def get_settings():
+    return config.Settings()
 
 
 class Tweet(Base):
@@ -31,4 +38,3 @@ class Event(Base):
     lat = Column(Float)
     long = Column(Float)
     event_type = Column(String)
-    time = Column(Time)

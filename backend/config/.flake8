@@ -1,0 +1,41 @@
+[flake8]
+max-line-length = 100
+ignore =
+    # We need to solve these 2 violations as we evolve
+    # Line too long
+    E501
+
+    # local variable is assigned but never used
+    F841,
+
+    # We need to remove this once we fix all functions that lack
+    # return types
+    ANN201, ANN202, ANN203, ANN204, ANN205, ANN206
+extend-ignore =
+    # line break before binary operator
+    W503,
+
+    # whitespace before '[' - match statement cases
+    E211
+
+    # whitespace before ':' - required to match Black
+    E203,
+
+    # Missing type annotation for self in method
+    ANN101,
+
+    # Missing type annotation for cls in classmethod
+    ANN102,
+
+    # Missing type annotation for args
+    ANN001, ANN002, ANN003
+
+per-file-ignores =
+    # Tasks can't have return type annotations because the @task
+    # annotation fails when they do
+    tasks/*: ANN201, ANN202, ANN203, ANN204, ANN205, ANN206
+
+    # littered with too-long lines
+    backend/python/common/lumos/models/offboarding_workflow_checkpoint.py: E501
+    backend/python/common/lumos/controllers/domain_app_actions/merge_domain_apps_test.py: ANN201, ANN202
+    research/20201108_okta_remove_user/okta.py: ANN201, E501, F841

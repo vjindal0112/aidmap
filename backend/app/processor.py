@@ -2,15 +2,15 @@ import json
 import requests
 import openai
 import schemas
-from fastapi import Depends
 from sqlalchemy.orm import Session
 import crud
 from copy import deepcopy
 import urllib.parse
-from __init__ import SessionLocal, Tweet
+import __init__
 
-OPENAI_API_KEY = "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"
-GOOGLE_MAPS_API_KEY = "AIzaSyDIrRIlGPz7hRBZpAAXzz509DniXerZjIs"
+OPENAI_API_KEY = __init__.get_settings().OPENAI_API_KEY
+GOOGLE_MAPS_API_KEY = __init__.get_settings().GOOGLE_MAPS_API_KEY
+openai.api_key = OPENAI_API_KEY
 engine = "gpt-4"
 originial_context = [
     {"role": "system", "content": "You only return json \
@@ -34,31 +34,22 @@ country: "",
 }"""
 
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-def process_tweet(tweet: schemas.Tweet, db: Session = Depends(get_db)):
+def process_tweet(tweet: schemas.Tweet, db: Session):
     prompt = CORE_PROMPT_START + tweet.text + CORE_PROMPT_END
     response = call_openai_api(deepcopy(context), prompt)
     if "error" in response or response["response"] == "ERROR":
         return {"error": response["error"]}
     event = {}
     event['event_type'] = response['response']['event_type']
-    point = words_to_geo_point(response["response"]["address_of_event"])
+    point = words_to_geo_point(response["response"]["address_of_event"] 
+                               + " " + response["response"]["country"])
     if "error" in point:
         return {"error": point["error"]}
     event["lat"] = point["lat"]
     event["long"] = point["long"]
-    event["time"] = tweet.time
 
-    db.query(schemas.Tweet).filter(Tweet.id == tweet.id).update(
-        {"is_processed": True})
+    # db.query(schemas.Tweet).filter(Tweet.id == tweet.id).update(
+    #     {"is_processed": True})
 
     event = schemas.EventCreate(**event)
     return crud.create_event(db, event)
@@ -66,9 +57,9 @@ def process_tweet(tweet: schemas.Tweet, db: Session = Depends(get_db)):
 
 def words_to_geo_point(words: str):
     url_encoded_words = urllib.parse.quote(words)
-    res = requests.get(f"https://maps.googleapis.com/maps/api/place/ \
-                       textsearch/json?query={url_encoded_words}& \
-                       key={GOOGLE_MAPS_API_KEY}")
+    res = requests.get(
+        f"https://maps.googleapis.com/maps/api/place/textsearch/json?query={url_encoded_words}&key={GOOGLE_MAPS_API_KEY}"
+        )
     if res.status_code != 200:
         return {"error": res.status_code}
     res = res.json()
@@ -83,7 +74,7 @@ def call_openai_api(context, prompt=None):
         if prompt:
             context.append({"role": "user", "content": prompt})
         response = openai.ChatCompletion.create(
-            model="gpt-4",  # Replace with the appropriate model name for GPT-4
+            model=engine,  # Replace with the appropriate model name for GPT-4
             messages=context,
             n=1,
             stop=None,

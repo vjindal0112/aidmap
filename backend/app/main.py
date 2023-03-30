@@ -1,5 +1,4 @@
 from typing import List
-from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from fastapi import Depends, FastAPI
 import crud
@@ -35,10 +34,9 @@ async def root(db: Session = Depends(get_db)):
 @app.get("/process/")
 def process(db: Session = Depends(get_db)):
     tweets = crud.get_tweets_unprocessed(db)
-    print(tweets)
     for tweet in tweets:
         if tweet.is_processed is False:
-            print(processor.process_tweet(tweet))
+            processor.process_tweet(tweet, db)
     return {"message": "Processed"}
 
 

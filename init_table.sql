@@ -3,7 +3,6 @@ CREATE TABLE events (
     lat FLOAT,
     long FLOAT,
     event_type TEXT,
-    time TIME
 );
 
 CREATE TABLE tweets (
